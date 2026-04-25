@@ -3,14 +3,16 @@
 > [!IMPORTANT]
 > This project is minimal.
 
-A small tennis game simulator written in Clojure.
+A small terminal tennis game simulator written in Clojure.
 
 ## Functionalities
 
-* Point progression (0, 15, 30, 40)
-* Game simulation (player vs CPU)
-* Simple decision system: Defensive play and Aggressive play.
-* Randomized point outcomes
+* Real tennis game scoring with deuce and advantage
+* Point simulation with rallies instead of a single weighted roll
+* Parabolic ball trajectory affecting net clearance and landing depth
+* Player vs CPU shot selection
+* Difficulty selection before the match starts
+* CPU behavior that reacts to scoreboard pressure
 * Game loop with terminal interaction
 * Winner detection
 
@@ -29,33 +31,75 @@ lein run
 
 ## Gameplay
 
-During the game, you will be prompted to choose an action:
+During the game, you will be prompted to choose a shot profile:
+
+Before the first point, you also choose a difficulty:
 
 ```text
-Escolha: (d) defensiva | (a) atacar
+Choose difficulty:
+  (e) Easy
+  (n) Normal
+  (h) Hard
 ```
 
-* `d` → safer play (more consistent, lower risk)
-* `a` → aggressive play (higher risk, higher reward)
+* `e` → more margin for the player, more mistakes from the cpu
+* `n` → balanced conditions
+* `h` → less margin for the player, cleaner execution from the cpu
+* `q` → leave the game immediately
 
-The system will simulate the point and update the score.
+```text
+Choose your shot: (s) safe | (b) balanced | (a) aggressive | (q) quit
+```
+
+* `s` → lower risk, longer rallies
+* `b` → balanced trade-off between consistency and pace
+* `a` → higher risk, higher chance to finish the point early
+* `q` → quit the current match
+
+The system simulates each point as a rally. Every shot follows a simplified parabolic trajectory, and net clearance plus landing depth feed back into the point outcome.
+
+The terminal flow also gives a quick read on match pressure and the CPU posture before each point, then follows up with a short rally summary after the exchange. The screen is redrawn between interactions so the terminal stays clean instead of stacking old frames.
 
 ## Example Output
 
 ```text
-Placar: {:p1 0, :p2 0}
-Escolha: (d) defensiva | (a) atacar
-d
-Ponto para: :p1
+Choose difficulty:
+  (e) Easy
+  (n) Normal
+  (h) Hard
+  (q) Quit
+n
+Normal: balanced match conditions.
 
-Placar: {:p1 15, :p2 0}
-Escolha: (d) defensiva | (a) atacar
+Score: 0-0
+Level score. No one has the edge yet.
+Cpu read: holding a neutral court position.
+Choose your shot:
+  (s) Safe
+  (b) Balanced
+  (a) Aggressive
+  (q) Quit
+b
+Balanced: trade margin for pace.
+Player took a measured rally by striking first. The ball traveled with heavy net clearance and landed through the middle third. Player: balanced. Cpu: balanced.
+That ball pushed deep and rushed the reply.
+
+Score: 15-0
+Player is ahead. A solid point here would tighten control.
+Cpu read: stepping in and looking to take time away.
+Choose your shot:
+  (s) Safe
+  (b) Balanced
+  (a) Aggressive
+  (q) Quit
 a
-Ponto para: :p2
+Aggressive: press for a short point.
+Cpu took a short exchange by drawing the mistake. The ball traveled with a low margin over the net and landed close to the baseline. Player: aggressive. Cpu: aggressive.
+Cpu absorbed the pressure and came through.
 
 ...
 
-Vencedor: :p1
+Score: Advantage player
 ```
 
 ## Goal
